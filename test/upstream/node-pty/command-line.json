@@ -1,0 +1,134 @@
+[
+  {
+    "title": "doesn't quote plain string",
+    "file": "asdf",
+    "args": [],
+    "expected": "asdf"
+  },
+  {
+    "title": "doesn't escape backslashes",
+    "file": "\\asdf\\qwer\\",
+    "args": [],
+    "expected": "\\asdf\\qwer\\"
+  },
+  {
+    "title": "doesn't escape multiple backslashes",
+    "file": "asdf\\\\qwer",
+    "args": [],
+    "expected": "asdf\\\\qwer"
+  },
+  {
+    "title": "adds backslashes before quotes",
+    "file": "\"asdf\"qwer\"",
+    "args": [],
+    "expected": "\\\"asdf\\\"qwer\\\""
+  },
+  {
+    "title": "escapes backslashes before quotes",
+    "file": "asdf\\\"qwer",
+    "args": [],
+    "expected": "asdf\\\\\\\"qwer"
+  },
+  {
+    "title": "quotes string with spaces",
+    "file": "asdf qwer",
+    "args": [],
+    "expected": "\"asdf qwer\""
+  },
+  {
+    "title": "quotes empty string",
+    "file": "",
+    "args": [],
+    "expected": "\"\""
+  },
+  {
+    "title": "quotes string with tabs",
+    "file": "asdf\tqwer",
+    "args": [],
+    "expected": "\"asdf\tqwer\""
+  },
+  {
+    "title": "escapes only the last backslash",
+    "file": "\\asdf \\qwer\\",
+    "args": [],
+    "expected": "\"\\asdf \\qwer\\\\\""
+  },
+  {
+    "title": "doesn't escape multiple backslashes",
+    "file": "asdf \\\\qwer",
+    "args": [],
+    "expected": "\"asdf \\\\qwer\""
+  },
+  {
+    "title": "escapes backslashes before quotes",
+    "file": "asdf \\\"qwer",
+    "args": [],
+    "expected": "\"asdf \\\\\\\"qwer\""
+  },
+  {
+    "title": "escapes multiple backslashes at the end",
+    "file": "asdf qwer\\\\",
+    "args": [],
+    "expected": "\"asdf qwer\\\\\\\\\""
+  },
+  {
+    "title": "joins arguments with spaces",
+    "file": "asdf",
+    "args": ["qwer zxcv", "", "\""],
+    "expected": "asdf \"qwer zxcv\" \"\" \\\""
+  },
+  {
+    "title": "array argument all in quotes",
+    "file": "asdf",
+    "args": ["\"surounded by quotes\""],
+    "expected": "asdf \\\"surounded by quotes\\\""
+  },
+  {
+    "title": "array argument quotes in the middle",
+    "file": "asdf",
+    "args": ["quotes \"in the\" middle"],
+    "expected": "asdf \"quotes \\\"in the\\\" middle\""
+  },
+  {
+    "title": "array argument quotes near start",
+    "file": "asdf",
+    "args": ["\"quotes\" near start"],
+    "expected": "asdf \"\\\"quotes\\\" near start\""
+  },
+  {
+    "title": "array argument quotes near end",
+    "file": "asdf",
+    "args": ["quotes \"near end\""],
+    "expected": "asdf \"quotes \\\"near end\\\"\""
+  },
+  {
+    "title": "should handle empty string",
+    "file": "file",
+    "args": "",
+    "expected": "file"
+  },
+  {
+    "title": "should not change args",
+    "file": "file",
+    "args": "foo bar baz",
+    "expected": "file foo bar baz"
+  },
+  {
+    "title": "should not change args",
+    "file": "file",
+    "args": "foo \\ba\"r \baz",
+    "expected": "file foo \\ba\"r \baz"
+  },
+  {
+    "title": "quotes within quotes",
+    "file": "cmd.exe",
+    "args": ["/c", "powershell -noexit -command 'Set-location \"C:\\user\"'"],
+    "expected": "cmd.exe /c \"powershell -noexit -command 'Set-location \\\"C:\\user\\\"'\""
+  },
+  {
+    "title": "space within quotes",
+    "file": "cmd.exe",
+    "args": ["/k", "\"C:\\Users\\alros\\Desktop\\test script.bat\""],
+    "expected": "cmd.exe /k \\\"C:\\Users\\alros\\Desktop\\test script.bat\\\""
+  }
+]

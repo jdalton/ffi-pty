@@ -1,0 +1,51 @@
+{
+  "extends": ["../.config/oxlintrc.json"],
+  "overrides": [
+    {
+      "files": [
+        "win32/windows-commandline.mts",
+        "win32/windows-helper-pe.mts",
+        "validation.mts",
+        "win32/windows-ffi-worker.mts",
+        "win32/windows-controller.mts"
+      ],
+      "rules": {
+        "eslint/complexity": ["error", 32]
+      }
+    },
+    {
+      "files": ["linux/linux.mts", "unix-poll.mts"],
+      "rules": {
+        "eslint/no-shadow": "off"
+      }
+    },
+    {
+      "files": [
+        "win32/windows-native.mts",
+        "win32/windows-ffi-worker.mts",
+        "linux/linux.mts"
+      ],
+      "rules": {
+        "typescript/no-explicit-any": "off"
+      }
+    },
+    {
+      "files": ["events.mts"],
+      "rules": {
+        "unicorn/no-useless-spread": "off"
+      }
+    },
+    {
+      "files": ["win32/windows-ffi.mts"],
+      "rules": {
+        "unicorn/require-post-message-target-origin": "off"
+      }
+    },
+    {
+      "files": ["**/*.mts"],
+      "rules": {
+        "eslint/curly": ["error", "multi-line"]
+      }
+    }
+  ]
+}

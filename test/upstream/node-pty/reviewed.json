@@ -1,0 +1,8 @@
+{
+  "src/eventEmitter2.test.ts": "f87cbda7d32917d47eba9b176689858dc7f69103b0b15805d5fb8f7f9fe3fef9",
+  "src/terminal.test.ts": "f41602ea9f4b222e76de365e28ac7ea466fc491e7613db83eab0da59fbfa35eb",
+  "src/testUtils.test.ts": "bfc0e1fa00eb8ccdf3c9d887f92b132bb8e1e1e85a1ef7999ae2c10a69336777",
+  "src/unixTerminal.test.ts": "d9ecc31ec9eee89b4b2af51307576b2270c10ff92f03736173e9a32ed83587f9",
+  "src/windowsPtyAgent.test.ts": "6e58c5a5782290d7bda0e948b2b81beb0090d3123b20e9471c75f9a36face2cf",
+  "src/windowsTerminal.test.ts": "0ff6065947be6c151e9b461492e665d129239afa3931e2e1a27092e4a21cd541"
+}

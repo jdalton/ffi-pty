@@ -1,0 +1,125 @@
+# Inlined by Vowen. No third-party or local actions.
+name: 'sign: windows helpers'
+run-name: 'sign: windows helpers (${{ github.ref_name }})'
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: sign-windows-helpers
+  cancel-in-progress: false
+jobs:
+  sign:
+    name: Sign Windows helpers (${{ matrix.runner }})
+    if: github.ref == 'refs/heads/main'
+    environment: sign-azure-artifact
+    permissions:
+      contents: read
+      id-token: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: windows-2022
+            arch: x64
+          - runner: windows-11-arm
+            arch: arm64
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: bash
+    env:
+      NODE_VERSION: 26.12.0
+      PNPM_VERSION: 12.12.0
+    steps:
+      - name: Check out the tested commit
+        env:
+          CHECKOUT_TOKEN: ${{ github.token }}
+        run: |
+          node <<'JS'
+          const {execFileSync} = require('node:child_process');
+          const env = {...process.env};
+          const auth = Buffer.from(`x-access-token:${env.CHECKOUT_TOKEN}`).toString('base64');
+          delete env.CHECKOUT_TOKEN;
+          env.GIT_CONFIG_COUNT = '1';
+          env.GIT_CONFIG_KEY_0 = `http.${env.GITHUB_SERVER_URL}/.extraheader`;
+          env.GIT_CONFIG_VALUE_0 = `AUTHORIZATION: basic ${auth}`;
+          const git = (...args) => execFileSync('git', args, {env, stdio:'pipe'});
+          try {
+            git('init', '.');
+            git('config', 'core.autocrlf', 'false');
+            git('remote', 'add', 'origin', `${env.GITHUB_SERVER_URL}/${env.GITHUB_REPOSITORY}.git`);
+            git('fetch', '--no-tags', '--depth=1', 'origin', env.GITHUB_SHA);
+            git('checkout', '--detach', 'FETCH_HEAD');
+            if (git('rev-parse', 'HEAD').toString().trim() !== env.GITHUB_SHA) throw new Error('Commit mismatch');
+          } catch { throw new Error('Checkout failed; credentials were not persisted'); }
+          JS
+      - name: Install checksum-verified Node
+        run: |
+          node <<'JS'
+          const fs = require('node:fs');
+          const path = require('node:path');
+          const {createHash} = require('node:crypto');
+          const {execFileSync} = require('node:child_process');
+          (async () => {
+            const arch = {X64:'x64', ARM64:'arm64'}[process.env.RUNNER_ARCH];
+            if (!arch) throw new Error('Unsupported runner architecture');
+            const platform = process.platform === 'win32' ? 'win' : process.platform;
+            const base = `node-v${process.env.NODE_VERSION}-${platform}-${arch}`;
+            const file = base + (platform === 'win' ? '.zip' : '.tar.gz');
+            const url = `https://nodejs.org/dist/v${process.env.NODE_VERSION}/`;
+            const download = async name => {
+              const response = await fetch(url + name);
+              if (!response.ok) throw new Error(`Node download failed: ${response.status}`);
+              return Buffer.from(await response.arrayBuffer());
+            };
+            const sums = (await download('SHASUMS256.txt')).toString();
+            const expected = sums.split('\n').map(line => line.trim().split(/\s+/)).find(row => row[1] === file)?.[0];
+            if (!expected || !/^[a-f0-9]{64}$/.test(expected)) throw new Error('Missing Node checksum');
+            const bytes = await download(file);
+            if (createHash('sha256').update(bytes).digest('hex') !== expected) throw new Error('Node checksum mismatch');
+            const directory = path.join(process.env.RUNNER_TEMP, 'pinned-node');
+            fs.mkdirSync(directory, {recursive:true});
+            const archive = path.join(directory, file);
+            fs.writeFileSync(archive, bytes);
+            if (platform === 'win') {
+              execFileSync('pwsh', ['-NoProfile', '-Command', 'Expand-Archive -LiteralPath $env:NODE_ARCHIVE -DestinationPath $env:NODE_DESTINATION'], {env:{...process.env, NODE_ARCHIVE:archive, NODE_DESTINATION:directory}});
+            } else execFileSync('tar', ['-xzf', archive, '-C', directory]);
+            const bin = path.join(directory, base, ...(platform === 'win' ? [] : ['bin']));
+            fs.appendFileSync(process.env.GITHUB_PATH, bin + '\n');
+          })().catch(error => {console.error(error); process.exitCode=1});
+          JS
+      - name: Install pinned repository tooling
+        run: |
+          test "$(node --version)" = "v$NODE_VERSION"
+          npm install --global --allow-scripts=pnpm --no-audit --no-fund "pnpm@$PNPM_VERSION"
+          test "$(pnpm --version)" = "$PNPM_VERSION"
+          pnpm install --frozen-lockfile
+      - name: Build the native helper
+        run: pnpm run build:windows-helper
+      - name: Sign and verify the helper
+        env:
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_ARTIFACT_SIGNING_ENDPOINT: ${{ secrets.AZURE_ARTIFACT_SIGNING_ENDPOINT }}
+          AZURE_ARTIFACT_SIGNING_ACCOUNT_NAME: ${{ secrets.AZURE_ARTIFACT_SIGNING_ACCOUNT_NAME }}
+          AZURE_ARTIFACT_SIGNING_CERTIFICATE_PROFILE_NAME: ${{ secrets.AZURE_ARTIFACT_SIGNING_CERTIFICATE_PROFILE_NAME }}
+          HELPER_ARCH: ${{ matrix.arch }}
+        run: node scripts/sign-windows-helper.mts "build/ffi-pty/win32-$HELPER_ARCH/helper.exe" "$HELPER_ARCH"
+      - name: Package and exercise the signed helper
+        env:
+          FFI_PTY_TEST_SIGNED_HELPER: '1'
+        run: |
+          pnpm run build
+          node --experimental-ffi --test --test-timeout=120000 test/scripts/sign-windows-helper.integration.test.mts
+          node --experimental-ffi --test --test-timeout=120000 test/src/win32/windows-helper-lifecycle.test.mts
+          pnpm --dir dist pack --pack-destination ../artifacts
+          node scripts/verify-signed-package.mts
+
+      - name: Exercise the public API without test preloads
+        run: node --experimental-ffi --test --test-name-pattern='output is delivered' test/src/pty.test.mts
+      - name: Exercise the offline Windows test harness
+        run: node scripts/test.mts unit --test-name-pattern='Windows ConPTY starts a Unicode'
+      - name: Check the repository
+        run: pnpm run check

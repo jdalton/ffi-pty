@@ -1,0 +1,102 @@
+{
+  "schemaVersion": 1,
+  "sources": {
+    "vowen-config-schema": {
+      "src/vowen/config.schema.json": "8fb495d9e1d0a45a4db43d08910b6d62d43b1433c40b41dddd24990cebf18115"
+    },
+    "coverage/accumulate": {
+      "coverage/accumulate.mts": "f3b8a92facbe06083a882d35864a822f01081efb8e52c3e7a0732215b719027b",
+      "coverage/collect.mts": "a23e640f8a0065d04669fa3c2a84c74973ce862bacec1310cfa520b3ed4576d0",
+      "coverage/gate.mts": "1b130759569cdaec9fa99f00c068494f218079381d352de39d4e571d881fadcc",
+      "coverage/README.md": "8e347efd532d3193c831985aa65208260d66870676d83688448924c759a578a4"
+    },
+    "rolldown/build-report": {
+      "rolldown/plugins/build-report.mjs": "8a3c4452935cdb0c5e8d40365875823df3766c37b05edf816932ea02cce9d205",
+      "rolldown/tests/build-report.test.mts": "82ffd90a18837d415cffb2b66f17431efcfac6a6da9a78fb4edf5fad44f81d6d",
+      "rolldown/tests/build-fixture.mts": "03ceb3726588d5cfb3d962ee5ca691af919c8a43f2b58cdba4c0b58c892234f8"
+    },
+    "rolldown/output-policy": {
+      "rolldown/plugins/output-policy.mjs": "20ae78c27aa5c163b38ec8792df1681e317aa078d421bfdbe4c9384cf2e9b53b",
+      "rolldown/tests/output-policy.test.mts": "393fa879fa30444f67f2552143fa43db04c673142bf387744129b8b20eac881d",
+      "rolldown/tests/build-fixture.mts": "03ceb3726588d5cfb3d962ee5ca691af919c8a43f2b58cdba4c0b58c892234f8"
+    },
+    "settings/clang-format": {
+      "settings/clang-format": "0fb21659765e5bdfdfa61109a7e3e254da64da4d4484535d090cb94d4146afe6"
+    },
+    "settings/clang-tidy": {
+      "settings/clang-tidy": "f0a88acf50a3c5ff1280a24e9409a21cebaad14f40fa7cb81c9294dabd82bbbb"
+    },
+    "settings/editorconfig": {
+      "settings/editorconfig": "a6b98ea7cb6d61ed8d430dd0dffa46c87012b5cf859d4ce7207898954951fdcd"
+    },
+    "settings/quality": {
+      "settings/oxlintrc.json": "222f9d85878b307688748b4fa9b0cfaa61646b4feb8c1e713df6196fc5dadfc1",
+      "settings/oxfmtrc.json": "db930572e8d55d01fafc67f0a011a5e8bd9d36a24b1215525504df9d122c5fab"
+    },
+    "workflow/native-coverage": {
+      "workflows/native-coverage.yml": "4bdee3a5da06956ebc52e2a9fecf9ee64d49a17c42e3c9f0a7dd5c9e1a79550e"
+    },
+    "repository-context": {
+      ".:settings/editorconfig": "a6b98ea7cb6d61ed8d430dd0dffa46c87012b5cf859d4ce7207898954951fdcd"
+    },
+    "utility/paths/windows": {
+      "utilities/paths/windows.mjs": "cac0642844b43f3ffbf99725d0e2a52e46f8cb653e2ba750a05c8af82b808ee4"
+    }
+  },
+  "files": {
+    ".vowen/config.schema.json": {
+      "sha256": "8fb495d9e1d0a45a4db43d08910b6d62d43b1433c40b41dddd24990cebf18115"
+    },
+    ".clang-format": {
+      "sha256": "0fb21659765e5bdfdfa61109a7e3e254da64da4d4484535d090cb94d4146afe6"
+    },
+    ".clang-tidy": {
+      "sha256": "f0a88acf50a3c5ff1280a24e9409a21cebaad14f40fa7cb81c9294dabd82bbbb"
+    },
+    ".editorconfig": {
+      "sha256": "a6b98ea7cb6d61ed8d430dd0dffa46c87012b5cf859d4ce7207898954951fdcd"
+    },
+    ".config/oxlintrc.json": {
+      "sha256": "222f9d85878b307688748b4fa9b0cfaa61646b4feb8c1e713df6196fc5dadfc1"
+    },
+    ".config/oxfmtrc.json": {
+      "sha256": "db930572e8d55d01fafc67f0a011a5e8bd9d36a24b1215525504df9d122c5fab"
+    },
+    ".vowen/context.json": {
+      "sha256": "91e977e2b5491838e89531d6a301488cbce99a60382b75c13cd9fce54c5a15f8"
+    },
+    ".config/rolldown/plugins/build-report.mjs": {
+      "sha256": "8a3c4452935cdb0c5e8d40365875823df3766c37b05edf816932ea02cce9d205"
+    },
+    ".config/rolldown/tests/build-report.test.mts": {
+      "sha256": "82ffd90a18837d415cffb2b66f17431efcfac6a6da9a78fb4edf5fad44f81d6d"
+    },
+    ".config/rolldown/tests/build-fixture.mts": {
+      "sha256": "03ceb3726588d5cfb3d962ee5ca691af919c8a43f2b58cdba4c0b58c892234f8"
+    },
+    ".config/rolldown/plugins/output-policy.mjs": {
+      "sha256": "20ae78c27aa5c163b38ec8792df1681e317aa078d421bfdbe4c9384cf2e9b53b"
+    },
+    ".config/rolldown/tests/output-policy.test.mts": {
+      "sha256": "393fa879fa30444f67f2552143fa43db04c673142bf387744129b8b20eac881d"
+    },
+    ".config/coverage/accumulate.mts": {
+      "sha256": "f3b8a92facbe06083a882d35864a822f01081efb8e52c3e7a0732215b719027b"
+    },
+    ".config/coverage/collect.mts": {
+      "sha256": "a23e640f8a0065d04669fa3c2a84c74973ce862bacec1310cfa520b3ed4576d0"
+    },
+    ".config/coverage/gate.mts": {
+      "sha256": "1b130759569cdaec9fa99f00c068494f218079381d352de39d4e571d881fadcc"
+    },
+    ".config/coverage/README.md": {
+      "sha256": "8e347efd532d3193c831985aa65208260d66870676d83688448924c759a578a4"
+    },
+    ".github/workflows/coverage.yml": {
+      "sha256": "4bdee3a5da06956ebc52e2a9fecf9ee64d49a17c42e3c9f0a7dd5c9e1a79550e"
+    },
+    ".vowen/scripts/lib/paths/windows.mjs": {
+      "sha256": "cac0642844b43f3ffbf99725d0e2a52e46f8cb653e2ba750a05c8af82b808ee4"
+    }
+  }
+}

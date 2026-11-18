@@ -1,0 +1,30 @@
+{
+  "threshold": 98,
+  "include": [
+    "src/**/*.mts",
+    "scripts/**/*.mts",
+    "paths/**/*.mts"
+  ],
+  "exclude": [
+    "src/contract.mts",
+    "src/win32/windows-transport.mts",
+    "src/win32/windows-protocol.mts"
+  ],
+  "platformExclude": {
+    "darwin": [
+      "src/linux/**/*.mts",
+      "src/win32/windows*.mts",
+      "src/win32/build-windows-helper.mts"
+    ],
+    "linux": [
+      "src/darwin/**/*.mts",
+      "src/win32/windows*.mts",
+      "src/win32/build-windows-helper.mts"
+    ],
+    "win32": [
+      "src/darwin/**/*.mts",
+      "src/linux/**/*.mts",
+      "src/unix*.mts"
+    ]
+  }
+}

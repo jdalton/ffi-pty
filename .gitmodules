@@ -1,0 +1,5 @@
+[submodule "upstream/node-pty"]
+	path = upstream/node-pty
+	url = https://github.com/microsoft/node-pty.git
+	shallow = true
+	update = none

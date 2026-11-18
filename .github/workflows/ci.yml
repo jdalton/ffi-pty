@@ -1,0 +1,287 @@
+# Inlined by Vowen. No remote or local actions; only runner tools and repository devDependencies.
+name: 'ci: tests'
+run-name: 'ci: tests (${{ github.ref_name }})'
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      coverage-gate:
+        description: Enforce the per-runner coverage threshold
+        type: boolean
+        default: false
+      target:
+        description: Runner selection (all for release verification)
+        type: choice
+        default: auto
+        options:
+          - auto
+          - all
+          - darwin
+          - linux
+          - win32
+          - unix
+          - macos-15
+          - macos-15-intel
+          - ubuntu-22.04
+          - ubuntu-22.04-arm
+          - windows-2025
+          - windows-2022
+          - windows-11-arm
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  plan:
+    name: Select runners
+    runs-on: ubuntu-22.04
+    timeout-minutes: 5
+    outputs:
+      matrix: ${{ steps.select.outputs.matrix }}
+      docs-only: ${{ steps.select.outputs.docs-only }}
+    defaults:
+      run:
+        shell: bash
+    env:
+      NODE_VERSION: 26.4.0
+    steps:
+      - name: Check out the tested commit
+        env:
+          CHECKOUT_TOKEN: ${{ github.token }}
+        run: |
+          node <<'JS'
+          const {execFileSync} = require('node:child_process');
+          const env = {...process.env};
+          const auth = Buffer.from(`x-access-token:${env.CHECKOUT_TOKEN}`).toString('base64');
+          delete env.CHECKOUT_TOKEN;
+          env.GIT_CONFIG_COUNT = '1';
+          env.GIT_CONFIG_KEY_0 = `http.${env.GITHUB_SERVER_URL}/.extraheader`;
+          env.GIT_CONFIG_VALUE_0 = `AUTHORIZATION: basic ${auth}`;
+          const git = (...args) => execFileSync('git', args, {env, stdio:'pipe'});
+          try {
+            git('init', '.');
+            git('config', 'core.autocrlf', 'false');
+            git('remote', 'add', 'origin', `${env.GITHUB_SERVER_URL}/${env.GITHUB_REPOSITORY}.git`);
+            git('fetch', '--no-tags', '--depth=1', 'origin', env.GITHUB_SHA);
+            git('checkout', '--detach', 'FETCH_HEAD');
+            if (git('rev-parse', 'HEAD').toString().trim() !== env.GITHUB_SHA) throw new Error('Commit mismatch');
+          } catch { throw new Error('Checkout failed; credentials were not persisted'); }
+          JS
+      - name: Install checksum-verified Node
+        run: |
+          node <<'JS'
+          const fs = require('node:fs');
+          const path = require('node:path');
+          const {createHash} = require('node:crypto');
+          const {execFileSync} = require('node:child_process');
+          (async () => {
+            const arch = {X64:'x64', ARM64:'arm64'}[process.env.RUNNER_ARCH];
+            if (!arch) throw new Error('Unsupported runner architecture');
+            const platform = process.platform === 'win32' ? 'win' : process.platform;
+            const base = `node-v${process.env.NODE_VERSION}-${platform}-${arch}`;
+            const file = base + (platform === 'win' ? '.zip' : '.tar.gz');
+            const url = `https://nodejs.org/dist/v${process.env.NODE_VERSION}/`;
+            const download = async name => {
+              const response = await fetch(url + name);
+              if (!response.ok) throw new Error(`Node download failed: ${response.status}`);
+              return Buffer.from(await response.arrayBuffer());
+            };
+            const sums = (await download('SHASUMS256.txt')).toString();
+            const expected = sums.split('\n').map(line => line.trim().split(/\s+/)).find(row => row[1] === file)?.[0];
+            if (!expected || !/^[a-f0-9]{64}$/.test(expected)) throw new Error('Missing Node checksum');
+            const bytes = await download(file);
+            if (createHash('sha256').update(bytes).digest('hex') !== expected) throw new Error('Node checksum mismatch');
+            const directory = path.join(process.env.RUNNER_TEMP, 'pinned-node');
+            fs.mkdirSync(directory, {recursive:true});
+            const archive = path.join(directory, file);
+            fs.writeFileSync(archive, bytes);
+            if (platform === 'win') {
+              execFileSync('pwsh', ['-NoProfile', '-Command', 'Expand-Archive -LiteralPath $env:NODE_ARCHIVE -DestinationPath $env:NODE_DESTINATION'], {env:{...process.env, NODE_ARCHIVE:archive, NODE_DESTINATION:directory}});
+            } else execFileSync('tar', ['-xzf', archive, '-C', directory]);
+            const bin = path.join(directory, base, ...(platform === 'win' ? [] : ['bin']));
+            fs.appendFileSync(process.env.GITHUB_PATH, bin + '\n');
+          })().catch(error => {console.error(error); process.exitCode=1});
+          JS
+      - name: Select affected runners
+        id: select
+        env:
+          CHECKOUT_TOKEN: ${{ github.token }}
+        run: |
+          node <<'JS'
+          const auth = Buffer.from('x-access-token:' + process.env.CHECKOUT_TOKEN).toString('base64');
+          delete process.env.CHECKOUT_TOKEN;
+          process.env.GIT_CONFIG_COUNT = '1';
+          process.env.GIT_CONFIG_KEY_0 = 'http.' + process.env.GITHUB_SERVER_URL + '/.extraheader';
+          process.env.GIT_CONFIG_VALUE_0 = 'AUTHORIZATION: basic ' + auth;
+          require('./scripts/ci/plan.mts').planMain();
+          JS
+  test:
+    needs: plan
+    name: Tests (${{ matrix.runner }})
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: bash
+    env:
+      NODE_VERSION: 26.4.0
+      PNPM_VERSION: 12.12.0
+      COVERAGE_RUN: ci-${{ github.run_id }}-${{ github.run_attempt }}
+    steps:
+      - name: Check out the tested commit
+        env:
+          CHECKOUT_TOKEN: ${{ github.token }}
+        run: |
+          node <<'JS'
+          const {execFileSync} = require('node:child_process');
+          const env = {...process.env};
+          const auth = Buffer.from(`x-access-token:${env.CHECKOUT_TOKEN}`).toString('base64');
+          delete env.CHECKOUT_TOKEN;
+          env.GIT_CONFIG_COUNT = '1';
+          env.GIT_CONFIG_KEY_0 = `http.${env.GITHUB_SERVER_URL}/.extraheader`;
+          env.GIT_CONFIG_VALUE_0 = `AUTHORIZATION: basic ${auth}`;
+          const git = (...args) => execFileSync('git', args, {env, stdio:'pipe'});
+          try {
+            git('init', '.');
+            git('config', 'core.autocrlf', 'false');
+            git('remote', 'add', 'origin', `${env.GITHUB_SERVER_URL}/${env.GITHUB_REPOSITORY}.git`);
+            git('fetch', '--no-tags', '--depth=1', 'origin', env.GITHUB_SHA);
+            git('checkout', '--detach', 'FETCH_HEAD');
+            if (git('rev-parse', 'HEAD').toString().trim() !== env.GITHUB_SHA) throw new Error('Commit mismatch');
+          } catch { throw new Error('Checkout failed; credentials were not persisted'); }
+          JS
+      - name: Install checksum-verified Node
+        run: |
+          node <<'JS'
+          const fs = require('node:fs');
+          const path = require('node:path');
+          const {createHash} = require('node:crypto');
+          const {execFileSync} = require('node:child_process');
+          (async () => {
+            const arch = {X64:'x64', ARM64:'arm64'}[process.env.RUNNER_ARCH];
+            if (!arch) throw new Error('Unsupported runner architecture');
+            const platform = process.platform === 'win32' ? 'win' : process.platform;
+            const base = `node-v${process.env.NODE_VERSION}-${platform}-${arch}`;
+            const file = base + (platform === 'win' ? '.zip' : '.tar.gz');
+            const url = `https://nodejs.org/dist/v${process.env.NODE_VERSION}/`;
+            const download = async name => {
+              const response = await fetch(url + name);
+              if (!response.ok) throw new Error(`Node download failed: ${response.status}`);
+              return Buffer.from(await response.arrayBuffer());
+            };
+            const sums = (await download('SHASUMS256.txt')).toString();
+            const expected = sums.split('\n').map(line => line.trim().split(/\s+/)).find(row => row[1] === file)?.[0];
+            if (!expected || !/^[a-f0-9]{64}$/.test(expected)) throw new Error('Missing Node checksum');
+            const bytes = await download(file);
+            if (createHash('sha256').update(bytes).digest('hex') !== expected) throw new Error('Node checksum mismatch');
+            const directory = path.join(process.env.RUNNER_TEMP, 'pinned-node');
+            fs.mkdirSync(directory, {recursive:true});
+            const archive = path.join(directory, file);
+            fs.writeFileSync(archive, bytes);
+            if (platform === 'win') {
+              execFileSync('pwsh', ['-NoProfile', '-Command', 'Expand-Archive -LiteralPath $env:NODE_ARCHIVE -DestinationPath $env:NODE_DESTINATION'], {env:{...process.env, NODE_ARCHIVE:archive, NODE_DESTINATION:directory}});
+            } else execFileSync('tar', ['-xzf', archive, '-C', directory]);
+            const bin = path.join(directory, base, ...(platform === 'win' ? [] : ['bin']));
+            fs.appendFileSync(process.env.GITHUB_PATH, bin + '\n');
+          })().catch(error => {console.error(error); process.exitCode=1});
+          JS
+      - name: Install pinned repository tooling
+        run: |
+          test "$(node --version)" = "v$NODE_VERSION"
+          npm install --global --allow-scripts=pnpm --no-audit --no-fund "pnpm@$PNPM_VERSION"
+          test "$(pnpm --version)" = "$PNPM_VERSION"
+          pnpm install --frozen-lockfile
+      - name: Run fast tests
+        if: needs.plan.outputs.docs-only != 'true'
+        run: node .config/coverage/collect.mts --run="$COVERAGE_RUN" --suite=fast -- pnpm test
+      - name: Run mid tests
+        if: needs.plan.outputs.docs-only != 'true'
+        run: node .config/coverage/collect.mts --run="$COVERAGE_RUN" --suite=mid -- pnpm run test:mid
+      - name: Test Windows without the optional helper
+        if: runner.os == 'Windows' && needs.plan.outputs.docs-only != 'true'
+        run: node .config/coverage/collect.mts --run="$COVERAGE_RUN" --suite=windows-fallback -- node --experimental-ffi node_modules/vitest/vitest.mjs run --config vitest.config.mts --execArgv=--experimental-ffi test/src/win32/windows.test.mts
+      - name: Build the Windows helper
+        if: runner.os == 'Windows' && needs.plan.outputs.docs-only != 'true'
+        run: pnpm run build:windows-helper
+      - name: Test the bundled package and repository tooling
+        if: needs.plan.outputs.docs-only != 'true'
+        run: node .config/coverage/collect.mts --run="$COVERAGE_RUN" --suite=build -- pnpm run test:build
+      - name: Run slow native tests
+        if: needs.plan.outputs.docs-only != 'true'
+        run: node .config/coverage/collect.mts --run="$COVERAGE_RUN" --suite=slow -- pnpm run test:slow
+      - name: Run integration tests
+        if: needs.plan.outputs.docs-only != 'true'
+        run: node .config/coverage/collect.mts --run="$COVERAGE_RUN" --suite=integration -- pnpm run test:integration
+      - name: Validate and combine coverage
+        if: success() && needs.plan.outputs.docs-only != 'true'
+        env:
+          ENFORCE_COVERAGE: ${{ inputs.coverage-gate || false }}
+        run: |
+          node --input-type=module <<'JS'
+          import {readFileSync, writeFileSync} from 'node:fs';
+          import {gateCoverage} from './.config/coverage/gate.mts';
+          const run = process.env.COVERAGE_RUN;
+          const suites = ['fast', 'mid', 'build', 'slow', 'integration'];
+          if (process.platform === 'win32') suites.push('windows-fallback');
+          const expected = suites.map(suite => `${run}/${suite}/1`);
+          const receipts = expected.map(id => `.cache/coverage/${process.platform}-${process.arch}/${id}/receipt.json`);
+          writeFileSync('.cache/coverage/ci-plan.json', JSON.stringify({receipts, expected}));
+          const {threshold} = JSON.parse(readFileSync('.config/coverage.json', 'utf8'));
+          const failures = gateCoverage(process.cwd(), '.cache/coverage/ci-plan.json', threshold);
+          const enforce = process.env.ENFORCE_COVERAGE === 'true';
+          for (const failure of failures) console.log(`::${enforce ? 'error' : 'warning'}::${failure}`);
+          if (enforce && failures.length) process.exitCode = 1;
+          JS
+      - name: Report measured coverage
+        if: ${{ !cancelled() && needs.plan.outputs.docs-only != 'true' }}
+        run: |
+          node --input-type=module <<'JS'
+          import {appendFileSync, existsSync, readFileSync} from 'node:fs';
+          const folder = `.cache/coverage/${process.platform}-${process.arch}/combined`;
+          const file = `${folder}/coverage-summary.json`;
+          let text = 'Coverage evidence is missing or invalid. See the failed collection/gate step.\n';
+          if (existsSync(file)) {
+            const {total} = JSON.parse(readFileSync(file, 'utf8'));
+            text = `| Metric | Measured | Required |\n|---|---:|---:|\n`;
+            const {threshold} = JSON.parse(readFileSync('.config/coverage.json', 'utf8'));
+            for (const metric of ['lines','branches']) {
+              const value = total[metric];
+              const percent = value.total ? value.covered / value.total * 100 : 100;
+              text += `| ${metric} | ${percent.toFixed(2)}% | ${threshold}% |\n`;
+            }
+          }
+          appendFileSync(process.env.GITHUB_STEP_SUMMARY, text + '\nJavaScript/MTS coverage only; native C++ is not measured by V8.\n');
+          console.log(text);
+          const detail = `${folder}/coverage-final.json`;
+          if (existsSync(detail)) {
+            const report = JSON.parse(readFileSync(detail, 'utf8'));
+            for (const [name, entry] of Object.entries(report)) {
+              const missed = Object.entries(entry.b).flatMap(([id, counts]) => counts.flatMap((count, index) => count === 0 ? [entry.branchMap[id].locations[index]?.start.line ?? entry.branchMap[id].loc.start.line] : []));
+              if (missed.length) console.log('Uncovered branches:', name, [...new Set(missed)].join(', '));
+              const lines = new Set();
+              for (const [id, count] of Object.entries(entry.s)) if (count === 0) {
+                const span = entry.statementMap[id];
+                for (let line = span.start.line; line <= span.end.line; line++) lines.add(line);
+              }
+              if (lines.size) console.log('Uncovered lines:', name, [...lines].join(', '));
+            }
+          }
+          JS
+      - name: Check documentation and repository policy
+        if: needs.plan.outputs.docs-only == 'true'
+        run: |
+          pnpm run check:policy
+          pnpm run format:check
+          pnpm run lint

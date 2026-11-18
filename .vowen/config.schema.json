@@ -1,0 +1,431 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Vowen repository configuration",
+  "type": "object",
+  "required": ["schemaVersion", "snippets", "contexts"],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "JSON Schema reference for editor support."
+    },
+    "schemaVersion": {
+      "const": 2
+    },
+    "snippets": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "contexts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "profile"],
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Repository-relative path for this context; use . for the repository root."
+          },
+          "profile": {
+            "enum": ["javascript", "rust", "cpp", "go", "wasm"]
+          },
+          "conditions": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "bundles-vendored-deps",
+                "codeql",
+                "github-action",
+                "github-release",
+                "local-assist",
+                "napi",
+                "npm",
+                "prebake",
+                "test"
+              ]
+            },
+            "uniqueItems": true
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "project": {
+      "type": "object",
+      "properties": {
+        "repository": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9-]*$"
+            },
+            "shape": {
+              "enum": ["solo", "mono"]
+            }
+          },
+          "additionalProperties": false
+        },
+        "build": {
+          "type": "object",
+          "required": ["source", "artifact"],
+          "properties": {
+            "source": {
+              "enum": [
+                "npm-registry",
+                "github-release",
+                "ghcr",
+                "crates-registry",
+                "go-registry",
+                "github-action"
+              ]
+            },
+            "artifact": {
+              "enum": ["js", "addon", "binary", "rust", "go"]
+            },
+            "runtime": {
+              "enum": ["node", "bun", "deno"]
+            },
+            "bundlesVendoredDependencies": {
+              "type": "boolean"
+            },
+            "coverageArtifacts": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/repositoryPath"
+              },
+              "minItems": 1
+            }
+          },
+          "additionalProperties": false
+        },
+        "release": {
+          "type": "object",
+          "properties": {
+            "targets": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/releaseTarget"
+              }
+            },
+            "line": {
+              "type": "object",
+              "properties": {
+                "branch": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "boundaryTag": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "tagPattern": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "additionalProperties": false
+            },
+            "versionSource": {
+              "$ref": "#/$defs/repositoryPath"
+            },
+            "artifactWorkflow": {
+              "type": "string",
+              "pattern": "^\\.github/workflows/[A-Za-z0-9][A-Za-z0-9._-]*\\.yml$"
+            },
+            "githubAssetWorkflow": {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9_.-]*\\.ya?ml$"
+            },
+            "ghcrWorkflow": {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9_.-]*\\.ya?ml$"
+            },
+            "latestDistTagBranch": {
+              "type": "string",
+              "minLength": 1
+            },
+            "versionPolicy": {
+              "enum": ["standard", "patch-only"]
+            },
+            "changelog": {
+              "type": "boolean"
+            },
+            "github": {
+              "type": "boolean"
+            },
+            "ghcr": {
+              "type": "boolean"
+            },
+            "publishedPackages": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "capabilities": {
+          "type": "object",
+          "properties": {
+            "cargo": {
+              "$ref": "#/$defs/stringPathList"
+            },
+            "cpp": {
+              "$ref": "#/$defs/stringPathList"
+            },
+            "go": {
+              "$ref": "#/$defs/stringPathList"
+            },
+            "swift": {
+              "$ref": "#/$defs/stringPathList"
+            }
+          },
+          "additionalProperties": false
+        },
+        "assistance": {
+          "type": "object",
+          "properties": {
+            "local": {
+              "type": "boolean"
+            },
+            "localWorkflow": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": false
+        },
+        "documentation": {
+          "type": "object",
+          "properties": {
+            "surfaces": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["kind", "hub"],
+                "properties": {
+                  "kind": {
+                    "enum": [
+                      "api",
+                      "commands",
+                      "service",
+                      "guide",
+                      "action",
+                      "workflows"
+                    ]
+                  },
+                  "hub": {
+                    "type": "string",
+                    "pattern": "^(https://|docs/)"
+                  },
+                  "sources": {
+                    "$ref": "#/$defs/stringPathList"
+                  },
+                  "generate": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "check": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "apiMd": {
+              "type": "boolean"
+            },
+            "llmsTxt": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": false
+        },
+        "workspace": {
+          "type": "object",
+          "properties": {
+            "catalogDriftIgnore": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniqueItems": true
+            },
+            "allowBuilds": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "boolean"
+              }
+            },
+            "blockExoticSubdeps": {
+              "type": "boolean"
+            },
+            "minimumReleaseAge": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "minimumReleaseAgeExclude": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "resolutionMode": {
+              "enum": ["highest", "lowest-direct"]
+            },
+            "trustPolicy": {
+              "enum": ["no-downgrade", "match-spec"]
+            }
+          },
+          "additionalProperties": false
+        },
+        "quality": {
+          "type": "object",
+          "properties": {
+            "testLanes": {
+              "type": "object",
+              "properties": {
+                "fast": {
+                  "$ref": "#/$defs/stringPathList"
+                },
+                "mid": {
+                  "$ref": "#/$defs/stringPathList"
+                },
+                "slow": {
+                  "$ref": "#/$defs/stringPathList"
+                }
+              },
+              "additionalProperties": false
+            },
+            "untestedEntryScripts": {
+              "$ref": "#/$defs/grandfatheredPaths"
+            },
+            "untypedHookVerdicts": {
+              "$ref": "#/$defs/grandfatheredPaths"
+            }
+          },
+          "additionalProperties": false
+        },
+        "git": {
+          "type": "object",
+          "properties": {
+            "identity": {
+              "type": "object",
+              "properties": {
+                "canonical": {
+                  "$ref": "#/$defs/gitIdentity"
+                },
+                "aliases": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/$defs/gitIdentity"
+                  }
+                },
+                "denylist": {
+                  "type": "object",
+                  "properties": {
+                    "emails": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "uniqueItems": true
+                    },
+                    "names": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "uniqueItems": true
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "$defs": {
+    "repositoryPath": {
+      "type": "string",
+      "minLength": 1,
+      "anyOf": [
+        {
+          "const": "."
+        },
+        {
+          "pattern": "^(?!/)(?!.*\\\\)(?!.*(^|/)\\.\\.?(/|$)).+$"
+        }
+      ]
+    },
+    "stringPathList": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/repositoryPath"
+      },
+      "uniqueItems": true
+    },
+    "grandfatheredPaths": {
+      "type": "object",
+      "required": ["grandfathered"],
+      "properties": {
+        "grandfathered": {
+          "$ref": "#/$defs/stringPathList"
+        }
+      },
+      "additionalProperties": false
+    },
+    "gitIdentity": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "email": {
+          "type": "string",
+          "format": "email"
+        }
+      },
+      "additionalProperties": false
+    },
+    "releaseTarget": {
+      "type": "object",
+      "required": ["source", "artifact"],
+      "properties": {
+        "source": {
+          "enum": [
+            "npm-registry",
+            "github-release",
+            "ghcr",
+            "crates-registry",
+            "go-registry",
+            "github-action"
+          ]
+        },
+        "artifact": {
+          "enum": ["js", "addon", "binary", "rust", "go"]
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

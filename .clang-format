@@ -1,0 +1,6 @@
+# Vowen C++ formatting defaults based on LLVM style.
+BasedOnStyle: LLVM
+IndentWidth: 2
+ColumnLimit: 80
+PointerAlignment: Left
+SortIncludes: CaseSensitive

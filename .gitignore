@@ -1,0 +1,8 @@
+build/
+node_modules/
+dist/
+.cache/
+artifacts/
+
+# Local setup progress
+.vowen/setup-progress.json

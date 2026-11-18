@@ -1,0 +1,38 @@
+{
+  "extends": ["../.config/oxlintrc.json"],
+  "overrides": [
+    {
+      "files": ["src/unix-environment.test.mts"],
+      "rules": {
+        "eslint/no-proto": "off"
+      }
+    },
+    {
+      "files": ["src/win32/windows-helper-trust.integration.test.mts"],
+      "rules": {
+        "eslint/complexity": ["error", 18]
+      }
+    },
+    {
+      "files": ["src/win32/windows-ffi-resize-probe.mts"],
+      "rules": {
+        "eslint/no-shadow": "off"
+      }
+    },
+    {
+      "files": [
+        "src/win32/windows-helper-lifecycle.test.mts",
+        "src/win32/windows-broker.test.mts"
+      ],
+      "rules": {
+        "typescript/no-explicit-any": "off"
+      }
+    },
+    {
+      "files": ["src/**/*.mts"],
+      "rules": {
+        "eslint/curly": ["error", "multi-line"]
+      }
+    }
+  ]
+}

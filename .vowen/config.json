@@ -1,0 +1,16 @@
+{
+  "$schema": "./config.schema.json",
+  "schemaVersion": 2,
+  "snippets": [
+    "coverage/accumulate",
+    "rolldown/build-report",
+    "rolldown/output-policy",
+    "settings/clang-format",
+    "settings/clang-tidy",
+    "settings/editorconfig",
+    "settings/quality",
+    "utility/paths/windows",
+    "workflow/native-coverage"
+  ],
+  "contexts": []
+}

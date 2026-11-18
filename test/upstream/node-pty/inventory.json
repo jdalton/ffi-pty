@@ -1,0 +1,449 @@
+{
+  "repository": "https://github.com/microsoft/node-pty.git",
+  "revision": "35c28c7d68a192699e70b1e6a142908bdccd9212",
+  "files": [
+    {
+      "file": "src/eventEmitter2.test.ts",
+      "sha256": "f87cbda7d32917d47eba9b176689858dc7f69103b0b15805d5fb8f7f9fe3fef9",
+      "cases": [
+        {
+          "id": "src/eventEmitter2.test.ts#1",
+          "file": "src/eventEmitter2.test.ts",
+          "title": "should fire listeners multiple times",
+          "line": 9
+        },
+        {
+          "id": "src/eventEmitter2.test.ts#2",
+          "file": "src/eventEmitter2.test.ts",
+          "title": "should not fire listeners once disposed",
+          "line": 19
+        }
+      ]
+    },
+    {
+      "file": "src/terminal.test.ts",
+      "sha256": "f41602ea9f4b222e76de365e28ac7ea466fc491e7613db83eab0da59fbfa35eb",
+      "cases": [
+        {
+          "id": "src/terminal.test.ts#1",
+          "file": "src/terminal.test.ts",
+          "title": "should do basic type checks",
+          "line": 57
+        },
+        {
+          "id": "src/terminal.test.ts#2",
+          "file": "src/terminal.test.ts",
+          "title": "should throw for the wrong type",
+          "line": 66
+        },
+        {
+          "id": "src/terminal.test.ts#3",
+          "file": "src/terminal.test.ts",
+          "title": "should throw for wrong types within arrays",
+          "line": 76
+        },
+        {
+          "id": "src/terminal.test.ts#4",
+          "file": "src/terminal.test.ts",
+          "title": "should respect ctor flow control options",
+          "line": 89
+        }
+      ]
+    },
+    {
+      "file": "src/testUtils.test.ts",
+      "sha256": "bfc0e1fa00eb8ccdf3c9d887f92b132bb8e1e1e85a1ef7999ae2c10a69336777",
+      "cases": []
+    },
+    {
+      "file": "src/unixTerminal.test.ts",
+      "sha256": "d9ecc31ec9eee89b4b2af51307576b2270c10ff92f03736173e9a32ed83587f9",
+      "cases": [
+        {
+          "id": "src/unixTerminal.test.ts#1",
+          "file": "src/unixTerminal.test.ts",
+          "title": "should set a valid pts name",
+          "line": 25
+        },
+        {
+          "id": "src/unixTerminal.test.ts#2",
+          "file": "src/unixTerminal.test.ts",
+          "title": "should default to utf8",
+          "line": 44
+        },
+        {
+          "id": "src/unixTerminal.test.ts#3",
+          "file": "src/unixTerminal.test.ts",
+          "title": "should return a Buffer when encoding is null",
+          "line": 52
+        },
+        {
+          "id": "src/unixTerminal.test.ts#4",
+          "file": "src/unixTerminal.test.ts",
+          "title": "should support other encodings",
+          "line": 64
+        },
+        {
+          "id": "src/unixTerminal.test.ts#5",
+          "file": "src/unixTerminal.test.ts",
+          "title": "should open a pty with access to a master and slave socket",
+          "line": 91
+        },
+        {
+          "id": "src/unixTerminal.test.ts#6",
+          "file": "src/unixTerminal.test.ts",
+          "title": "should exit when terminal is destroyed programmatically",
+          "line": 118
+        },
+        {
+          "id": "src/unixTerminal.test.ts#7",
+          "file": "src/unixTerminal.test.ts",
+          "title": "SIGINT - custom in parent and child",
+          "line": 128
+        },
+        {
+          "id": "src/unixTerminal.test.ts#8",
+          "file": "src/unixTerminal.test.ts",
+          "title": "SIGINT - custom in parent, default in child",
+          "line": 168
+        },
+        {
+          "id": "src/unixTerminal.test.ts#9",
+          "file": "src/unixTerminal.test.ts",
+          "title": "SIGHUP default (child only)",
+          "line": 209
+        },
+        {
+          "id": "src/unixTerminal.test.ts#10",
+          "file": "src/unixTerminal.test.ts",
+          "title": "SIGUSR1 - custom in parent and child",
+          "line": 228
+        },
+        {
+          "id": "src/unixTerminal.test.ts#11",
+          "file": "src/unixTerminal.test.ts",
+          "title": "should not leak pty file descriptors to child processes",
+          "line": 264
+        },
+        {
+          "id": "src/unixTerminal.test.ts#12",
+          "file": "src/unixTerminal.test.ts",
+          "title": "should return the name of the process",
+          "line": 292
+        },
+        {
+          "id": "src/unixTerminal.test.ts#13",
+          "file": "src/unixTerminal.test.ts",
+          "title": "should return the name of the sub process",
+          "line": 298
+        },
+        {
+          "id": "src/unixTerminal.test.ts#14",
+          "file": "src/unixTerminal.test.ts",
+          "title": "should close on exec",
+          "line": 332
+        },
+        {
+          "id": "src/unixTerminal.test.ts#15",
+          "file": "src/unixTerminal.test.ts",
+          "title": "should not leak /dev/ptmx file descriptors after pty exit",
+          "line": 369
+        },
+        {
+          "id": "src/unixTerminal.test.ts#16",
+          "file": "src/unixTerminal.test.ts",
+          "title": "should not leak kqueue file descriptors after pty exit",
+          "line": 400
+        },
+        {
+          "id": "src/unixTerminal.test.ts#17",
+          "file": "src/unixTerminal.test.ts",
+          "title": "should handle exec() errors",
+          "line": 432
+        },
+        {
+          "id": "src/unixTerminal.test.ts#18",
+          "file": "src/unixTerminal.test.ts",
+          "title": "should handle chdir() errors",
+          "line": 439
+        },
+        {
+          "id": "src/unixTerminal.test.ts#19",
+          "file": "src/unixTerminal.test.ts",
+          "title": "should not leak child process",
+          "line": 446
+        }
+      ]
+    },
+    {
+      "file": "src/windowsPtyAgent.test.ts",
+      "sha256": "6e58c5a5782290d7bda0e948b2b81beb0090d3123b20e9471c75f9a36face2cf",
+      "cases": [
+        {
+          "id": "src/windowsPtyAgent.test.ts#1",
+          "file": "src/windowsPtyAgent.test.ts",
+          "title": "doesn't quote plain string",
+          "line": 54
+        },
+        {
+          "id": "src/windowsPtyAgent.test.ts#2",
+          "file": "src/windowsPtyAgent.test.ts",
+          "title": "doesn't escape backslashes",
+          "line": 57
+        },
+        {
+          "id": "src/windowsPtyAgent.test.ts#3",
+          "file": "src/windowsPtyAgent.test.ts",
+          "title": "doesn't escape multiple backslashes",
+          "line": 60
+        },
+        {
+          "id": "src/windowsPtyAgent.test.ts#4",
+          "file": "src/windowsPtyAgent.test.ts",
+          "title": "adds backslashes before quotes",
+          "line": 63
+        },
+        {
+          "id": "src/windowsPtyAgent.test.ts#5",
+          "file": "src/windowsPtyAgent.test.ts",
+          "title": "escapes backslashes before quotes",
+          "line": 66
+        },
+        {
+          "id": "src/windowsPtyAgent.test.ts#6",
+          "file": "src/windowsPtyAgent.test.ts",
+          "title": "quotes string with spaces",
+          "line": 72
+        },
+        {
+          "id": "src/windowsPtyAgent.test.ts#7",
+          "file": "src/windowsPtyAgent.test.ts",
+          "title": "quotes empty string",
+          "line": 75
+        },
+        {
+          "id": "src/windowsPtyAgent.test.ts#8",
+          "file": "src/windowsPtyAgent.test.ts",
+          "title": "quotes string with tabs",
+          "line": 78
+        },
+        {
+          "id": "src/windowsPtyAgent.test.ts#9",
+          "file": "src/windowsPtyAgent.test.ts",
+          "title": "escapes only the last backslash",
+          "line": 81
+        },
+        {
+          "id": "src/windowsPtyAgent.test.ts#10",
+          "file": "src/windowsPtyAgent.test.ts",
+          "title": "doesn't escape multiple backslashes",
+          "line": 84
+        },
+        {
+          "id": "src/windowsPtyAgent.test.ts#11",
+          "file": "src/windowsPtyAgent.test.ts",
+          "title": "escapes backslashes before quotes",
+          "line": 87
+        },
+        {
+          "id": "src/windowsPtyAgent.test.ts#12",
+          "file": "src/windowsPtyAgent.test.ts",
+          "title": "escapes multiple backslashes at the end",
+          "line": 90
+        },
+        {
+          "id": "src/windowsPtyAgent.test.ts#13",
+          "file": "src/windowsPtyAgent.test.ts",
+          "title": "joins arguments with spaces",
+          "line": 96
+        },
+        {
+          "id": "src/windowsPtyAgent.test.ts#14",
+          "file": "src/windowsPtyAgent.test.ts",
+          "title": "array argument all in quotes",
+          "line": 99
+        },
+        {
+          "id": "src/windowsPtyAgent.test.ts#15",
+          "file": "src/windowsPtyAgent.test.ts",
+          "title": "array argument quotes in the middle",
+          "line": 102
+        },
+        {
+          "id": "src/windowsPtyAgent.test.ts#16",
+          "file": "src/windowsPtyAgent.test.ts",
+          "title": "array argument quotes near start",
+          "line": 105
+        },
+        {
+          "id": "src/windowsPtyAgent.test.ts#17",
+          "file": "src/windowsPtyAgent.test.ts",
+          "title": "array argument quotes near end",
+          "line": 108
+        },
+        {
+          "id": "src/windowsPtyAgent.test.ts#18",
+          "file": "src/windowsPtyAgent.test.ts",
+          "title": "should handle empty string",
+          "line": 114
+        },
+        {
+          "id": "src/windowsPtyAgent.test.ts#19",
+          "file": "src/windowsPtyAgent.test.ts",
+          "title": "should not change args",
+          "line": 117
+        },
+        {
+          "id": "src/windowsPtyAgent.test.ts#20",
+          "file": "src/windowsPtyAgent.test.ts",
+          "title": "quotes within quotes",
+          "line": 124
+        },
+        {
+          "id": "src/windowsPtyAgent.test.ts#21",
+          "file": "src/windowsPtyAgent.test.ts",
+          "title": "space within quotes",
+          "line": 127
+        },
+        {
+          "id": "src/windowsPtyAgent.test.ts#22",
+          "file": "src/windowsPtyAgent.test.ts",
+          "title": "should fail without connecting when the worker times out",
+          "line": 135
+        },
+        {
+          "id": "src/windowsPtyAgent.test.ts#23",
+          "file": "src/windowsPtyAgent.test.ts",
+          "title": "should fail when the worker errors before becoming ready",
+          "line": 165
+        },
+        {
+          "id": "src/windowsPtyAgent.test.ts#24",
+          "file": "src/windowsPtyAgent.test.ts",
+          "title": "should ignore worker events after kill before readiness",
+          "line": 191
+        },
+        {
+          "id": "src/windowsPtyAgent.test.ts#25",
+          "file": "src/windowsPtyAgent.test.ts",
+          "title": "should defer conptyNative.connect() until worker is ready",
+          "line": 216
+        },
+        {
+          "id": "src/windowsPtyAgent.test.ts#26",
+          "file": "src/windowsPtyAgent.test.ts",
+          "title": "should successfully spawn a process after deferred connection",
+          "line": 248
+        },
+        {
+          "id": "src/windowsPtyAgent.test.ts#27",
+          "file": "src/windowsPtyAgent.test.ts",
+          "title": "should allow async work between construction and connection (non-blocking)",
+          "line": 276
+        }
+      ]
+    },
+    {
+      "file": "src/windowsTerminal.test.ts",
+      "sha256": "0ff6065947be6c151e9b461492e665d129239afa3931e2e1a27092e4a21cd541",
+      "cases": [
+        {
+          "id": "src/windowsTerminal.test.ts#1",
+          "file": "src/windowsTerminal.test.ts",
+          "title": "should not crash parent process",
+          "line": 99
+        },
+        {
+          "id": "src/windowsTerminal.test.ts#2",
+          "file": "src/windowsTerminal.test.ts",
+          "title": "should kill the process tree",
+          "line": 105
+        },
+        {
+          "id": "src/windowsTerminal.test.ts#3",
+          "file": "src/windowsTerminal.test.ts",
+          "title": "should be 0 before ready and set after ready_datapipe (issue #763)",
+          "line": 149
+        },
+        {
+          "id": "src/windowsTerminal.test.ts#4",
+          "file": "src/windowsTerminal.test.ts",
+          "title": "should throw a non-native exception when resizing an invalid value",
+          "line": 175
+        },
+        {
+          "id": "src/windowsTerminal.test.ts#5",
+          "file": "src/windowsTerminal.test.ts",
+          "title": "should throw a non-native exception when resizing a killed terminal",
+          "line": 186
+        },
+        {
+          "id": "src/windowsTerminal.test.ts#6",
+          "file": "src/windowsTerminal.test.ts",
+          "title": "should not fail running a file containing a space in the path",
+          "line": 200
+        },
+        {
+          "id": "src/windowsTerminal.test.ts#7",
+          "file": "src/windowsTerminal.test.ts",
+          "title": "should set environment variables of the shell",
+          "line": 228
+        },
+        {
+          "id": "src/windowsTerminal.test.ts#8",
+          "file": "src/windowsTerminal.test.ts",
+          "title": "should emit exit instead of an uncaught exception when CreateProcessW fails",
+          "line": 243
+        },
+        {
+          "id": "src/windowsTerminal.test.ts#9",
+          "file": "src/windowsTerminal.test.ts",
+          "title": "should return process zero exit codes",
+          "line": 257
+        },
+        {
+          "id": "src/windowsTerminal.test.ts#10",
+          "file": "src/windowsTerminal.test.ts",
+          "title": "should return process non-zero exit codes",
+          "line": 266
+        },
+        {
+          "id": "src/windowsTerminal.test.ts#11",
+          "file": "src/windowsTerminal.test.ts",
+          "title": "should accept input",
+          "line": 277
+        },
+        {
+          "id": "src/windowsTerminal.test.ts#12",
+          "file": "src/windowsTerminal.test.ts",
+          "title": "should make the window the owner of the console window when set right after spawn",
+          "line": 365
+        },
+        {
+          "id": "src/windowsTerminal.test.ts#13",
+          "file": "src/windowsTerminal.test.ts",
+          "title": "should change the owner when setParentWindow is called while the shell runs",
+          "line": 375
+        },
+        {
+          "id": "src/windowsTerminal.test.ts#14",
+          "file": "src/windowsTerminal.test.ts",
+          "title": "should not send setParentWindow once the pseudoconsole is closed",
+          "line": 387
+        },
+        {
+          "id": "src/windowsTerminal.test.ts#15",
+          "file": "src/windowsTerminal.test.ts",
+          "title": "should reject handles that are not buffers the size of an HWND",
+          "line": 398
+        },
+        {
+          "id": "src/windowsTerminal.test.ts#16",
+          "file": "src/windowsTerminal.test.ts",
+          "title": "should not crash with concurrent kills while resizing/clearing/reparenting",
+          "line": 407
+        }
+      ]
+    }
+  ]
+}

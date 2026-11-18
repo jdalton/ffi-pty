@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 2,
+  "repository": {
+    "schemaVersion": 1,
+    "universal": "universal",
+    "snippets": [
+      "coverage/accumulate",
+      "rolldown/build-report",
+      "rolldown/output-policy",
+      "settings/clang-format",
+      "settings/clang-tidy",
+      "settings/editorconfig",
+      "settings/quality",
+      "workflow/native-coverage"
+    ],
+    "contexts": []
+  },
+  "entries": [
+    {
+      "id": "coverage/accumulate",
+      "status": "active",
+      "readiness": "unit tested",
+      "tests": [],
+      "context": "Review the receiving runtime, module format, path roots, side effects and dependency closure. Active means retained, not universally compatible. Original source and notices are preserved."
+    },
+    {
+      "id": "rolldown/build-report",
+      "status": "active",
+      "readiness": "consumer contract review required",
+      "tests": [],
+      "context": "Review the receiving runtime, module format, path roots, side effects and dependency closure. Active means retained, not universally compatible. Original source and notices are preserved."
+    },
+    {
+      "id": "rolldown/output-policy",
+      "status": "active",
+      "readiness": "consumer contract review required",
+      "tests": [],
+      "context": "Review the receiving runtime, module format, path roots, side effects and dependency closure. Active means retained, not universally compatible. Original source and notices are preserved."
+    },
+    {
+      "id": "settings/clang-format",
+      "status": "active",
+      "readiness": "consumer contract review required",
+      "tests": [],
+      "context": "Review the receiving runtime, module format, path roots, side effects and dependency closure. Active means retained, not universally compatible. Original source and notices are preserved."
+    },
+    {
+      "id": "settings/clang-tidy",
+      "status": "active",
+      "readiness": "consumer contract review required",
+      "tests": [],
+      "context": "Review the receiving runtime, module format, path roots, side effects and dependency closure. Active means retained, not universally compatible. Original source and notices are preserved."
+    },
+    {
+      "id": "settings/editorconfig",
+      "status": "active",
+      "readiness": "consumer contract review required",
+      "tests": [],
+      "context": "Review the receiving runtime, module format, path roots, side effects and dependency closure. Active means retained, not universally compatible. Original source and notices are preserved."
+    },
+    {
+      "id": "settings/quality",
+      "status": "active",
+      "readiness": "consumer contract review required",
+      "tests": [],
+      "context": "Review the receiving runtime, module format, path roots, side effects and dependency closure. Active means retained, not universally compatible. Original source and notices are preserved."
+    },
+    {
+      "id": "workflow/native-coverage",
+      "status": "active",
+      "readiness": "workflow contract tests",
+      "tests": [],
+      "context": "Review the receiving runtime, module format, path roots, side effects and dependency closure. Active means retained, not universally compatible. Original source and notices are preserved."
+    }
+  ]
+}
